@@ -1,0 +1,31 @@
+# 官方 LeRobot 源码单独安装，不纳入本仓库
+/projects/lerobot/
+
+# 工作区根目录下的模型权重
+/models/
+
+# Python 缓存和安装生成物
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+
+# 本地 Python 环境
+.venv/
+.venv-*/
+
+# 本地编辑器配置
+/.vscode/
+.idea/
+
+# 密钥、令牌和本地环境变量
+.env
+.env.*
+!.env.example
+
+# 后续生成的数据和训练输出
+/datasets/
+/outputs/
+/checkpoints/
