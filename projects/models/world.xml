@@ -1,0 +1,130 @@
+<mujoco model="smolvla_world">
+  <!--
+    场景说明：
+    1. 通过 include 导入现有 UR5e + 夹爪模型；
+    2. 场景坐标单位为米；
+    3. 每个可抓取物体都有一个独立的 AprilTag 纹理平面；
+    4. 物体的 tag 平面只参与视觉，不参与碰撞。
+  -->
+  <include file="ur5e_world.xml"/>
+
+  <asset>
+    <!-- 浅灰色天空 -->
+    <texture name="sky_gradient" type="skybox" builtin="gradient"
+             rgb1="0.70 0.75 0.82" rgb2="0.96 0.96 0.96"
+             width="512" height="512"/>
+
+    <material name="mat_ground" rgba="0.62 0.64 0.67 1"/>
+    <material name="mat_table" rgba="0.96 0.96 0.96 1"/>
+    <material name="mat_platform" rgba="0.78 0.80 0.83 1"/>
+    <material name="mat_cube_small" rgba="0.90 0.18 0.12 1"/>
+    <material name="mat_cube_large" rgba="0.15 0.40 0.90 1"/>
+    <material name="mat_plate_small" rgba="0.95 0.95 0.96 1" specular="0.7" shininess="0.6"/>
+    <material name="mat_plate_large" rgba="0.88 0.90 0.94 1" specular="0.7" shininess="0.6"/>
+    <material name="mat_cup_small" rgba="0.95 0.70 0.12 1" specular="0.5" shininess="0.4"/>
+    <material name="mat_cup_large" rgba="0.18 0.65 0.45 1" specular="0.5" shininess="0.4"/>
+
+    <!-- 由 scripts/generate_apriltag_textures.py 生成的独立 tag 纹理 -->
+    <texture name="tag_cube_small" type="2d" file="textures/tag_cube_small.png"/>
+    <texture name="tag_cube_large" type="2d" file="textures/tag_cube_large.png"/>
+    <texture name="tag_plate_small" type="2d" file="textures/tag_plate_small.png"/>
+    <texture name="tag_plate_large" type="2d" file="textures/tag_plate_large.png"/>
+    <texture name="tag_cup_small" type="2d" file="textures/tag_cup_small.png"/>
+    <texture name="tag_cup_large" type="2d" file="textures/tag_cup_large.png"/>
+
+    <material name="mat_tag_cube_small" texture="tag_cube_small"/>
+    <material name="mat_tag_cube_large" texture="tag_cube_large"/>
+    <material name="mat_tag_plate_small" texture="tag_plate_small"/>
+    <material name="mat_tag_plate_large" texture="tag_plate_large"/>
+    <material name="mat_tag_cup_small" texture="tag_cup_small"/>
+    <material name="mat_tag_cup_large" texture="tag_cup_large"/>
+  </asset>
+
+  <visual>
+    <map znear="0.01" zfar="20" force="0.1"/>
+    <quality shadowsize="2048" offsamples="4"/>
+  </visual>
+
+  <worldbody>
+    <!-- 浅灰色地面和天空 -->
+    <geom name="ground" type="plane" size="5 5 0.1" material="mat_ground" contype="1" conaffinity="1"/>
+
+    <!-- 可直接修改 pos / dir 的主灯光 -->
+    <light name="key_light" pos="0 -1.5 3.0" dir="0.15 0.25 -1"
+           directional="true" diffuse="0.85 0.85 0.85" specular="0.25 0.25 0.25" castshadow="true"/>
+    <light name="fill_light" pos="-2 1.5 2.2" dir="0.25 -0.15 -1"
+           directional="true" diffuse="0.35 0.38 0.45" specular="0.05 0.05 0.05" castshadow="false"/>
+
+    <!-- 场景整体向机器人右侧平移，避免桌子遮挡机器人 -->
+    <!-- 白色桌子：桌面高度约 0.72 m -->
+    <body name="white_table" pos="0.65 0 0">
+      <!-- 桌面 X 方向宽度减半：范围约为 x=[0.225, 1.075] -->
+      <geom name="table_top" type="box" pos="0 -0.45 0.68" size="0.70 0.20 0.05"
+            material="mat_table" contype="1" conaffinity="1"/>
+      <geom name="table_leg_fl" type="box" pos="-0.34 -0.49 0.34" size="0.06 0.06 0.34" material="mat_table"/>
+      <geom name="table_leg_fr" type="box" pos="0.34 -0.49 0.34" size="0.06 0.06 0.34" material="mat_table"/>
+      <geom name="table_leg_bl" type="box" pos="-0.34 0.49 0.34" size="0.06 0.06 0.34" material="mat_table"/>
+      <geom name="table_leg_br" type="box" pos="0.34 0.49 0.34" size="0.06 0.06 0.34" material="mat_table"/>
+    </body>
+
+    <!-- 抓取后的放置区：不作为所有物体的支撑面 -->
+    <geom name="work_platform" type="box" pos="1.15 -0.45 0.735" size="0.14 0.14 0.005"
+          material="mat_table" contype="1" conaffinity="1"/>
+
+    <!-- 机器人基座：顶面约 0.78 m，与桌面高度接近；距桌子前沿约 10 cm -->
+    <geom name="robot_pedestal" type="box" pos="0.65 -0.90 0.39"
+          size="0.23 0.175 0.39" material="mat_platform" contype="1" conaffinity="1"/>
+
+    <!-- 小方块：tag 在顶部，物体和 tag 绑定，位置可直接修改 -->
+    <body name="cube_small" pos="0.30 -0.52 0.7625">
+      <freejoint name="cube_small_free"/>
+      <geom name="cube_small_geom" type="box" size="0.0225 0.0225 0.0225" material="mat_cube_small" density="400"/>
+      <geom name="cube_small_tag" type="box" pos="0 0 0.0235" size="0.015 0.015 0.0005"
+            material="mat_tag_cube_small" contype="0" conaffinity="0"/>
+    </body>
+
+    <!-- 大方块 -->
+    <body name="cube_large" pos="0.48 -0.52 0.7775">
+      <freejoint name="cube_large_free"/>
+      <geom name="cube_large_geom" type="box" size="0.0375 0.0375 0.0375" material="mat_cube_large" density="400"/>
+      <geom name="cube_large_tag" type="box" pos="0 0 0.038" size="0.025 0.025 0.0005"
+            material="mat_tag_cube_large" contype="0" conaffinity="0"/>
+    </body>
+
+    <!-- 小盘子：圆盘 + 顶部 tag -->
+    <body name="plate_small" pos="0.70 -0.55 0.746">
+      <freejoint name="plate_small_free"/>
+      <geom name="plate_small_geom" type="cylinder" size="0.0525 0.006" material="mat_plate_small" density="250"/>
+      <geom name="plate_small_tag" type="box" pos="0 0 0.0065" size="0.0175 0.0175 0.0005"
+            material="mat_tag_plate_small" contype="0" conaffinity="0"/>
+    </body>
+
+    <!-- 大盘子 -->
+    <body name="plate_large" pos="0.70 -0.37 0.7475">
+      <freejoint name="plate_large_free"/>
+      <geom name="plate_large_geom" type="cylinder" size="0.0725 0.0075" material="mat_plate_large" density="250"/>
+      <geom name="plate_large_tag" type="box" pos="0 0 0.008" size="0.0225 0.0225 0.0005"
+            material="mat_tag_plate_large" contype="0" conaffinity="0"/>
+    </body>
+
+    <!-- 小杯子：圆柱主体 + 环形把手 + 侧面 tag -->
+    <body name="cup_small" pos="0.35 -0.32 0.7775">
+      <freejoint name="cup_small_free"/>
+      <geom name="cup_small_body" type="cylinder" size="0.0275 0.0375" material="mat_cup_small" density="300"/>
+      <geom name="cup_small_handle" type="capsule" fromto="0.0225 0 0.0025 0.045 0 0.0025"
+            size="0.005" material="mat_cup_small"/>
+      <geom name="cup_small_tag" type="box" pos="0 0 0.038" size="0.015 0.015 0.0005"
+            material="mat_tag_cup_small" contype="0" conaffinity="0"/>
+    </body>
+
+    <!-- 大杯子 -->
+    <body name="cup_large" pos="0.52 -0.32 0.79">
+      <freejoint name="cup_large_free"/>
+      <geom name="cup_large_body" type="cylinder" size="0.0375 0.050" material="mat_cup_large" density="300"/>
+      <geom name="cup_large_handle" type="capsule" fromto="0.030 0 0.0025 0.060 0 0.0025"
+            size="0.006" material="mat_cup_large"/>
+      <geom name="cup_large_tag" type="box" pos="0 0 0.0505" size="0.020 0.020 0.0005"
+            material="mat_tag_cup_large" contype="0" conaffinity="0"/>
+    </body>
+  </worldbody>
+</mujoco>

@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 
 from mia_kinematics import FK_learn, IK_learn
-
+from .detect_apriltags import detect_apriltags,mask_apriltags
 import numpy as np
 import mujoco
 import time
@@ -923,8 +923,9 @@ class MyArm(Robot):
         observation["gripper.pos"] = float(
             np.clip(gripper_opening, 0.0, 1.0)
         )
+        
         for camera_name in self.camera_names:
-            observation[camera_name] = self.get_images(camera_name)
+            observation[camera_name] = mask_apriltags(self.get_images(camera_name))
         return observation
 
     def send_action(self, action: dict) -> dict:

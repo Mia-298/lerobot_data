@@ -202,6 +202,6 @@ class MyArm(Robot):
             raise RuntimeError("请先连接机器人，再复位仿真")
 
         # 恢复 XML 中名为 home 的 keyframe
-        mujoc
+        
     
 
