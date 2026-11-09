@@ -1,0 +1,227 @@
+[2026-11-06 16:38:21.824] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 16:38:21.827] [gen3dSDK] [error] [ClientBroadcast.cpp:125] Port: *:50001 bind error, please check whether the port is occupied.
+[2026-11-06 16:38:23.826] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 16:48:51.414] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 16:48:53.416] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 16:49:51.593] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 16:49:51.594] [gen3dSDK] [info] [CameraPro.cpp:518] Start to open 10.10.10.18:60000
+[2026-11-06 16:49:51.594] [gen3dSDK] [error] [CameraPro.cpp:521] Camera systemVersion: is less than minimum required camera system version:3.0.11. Please update your camera system.
+[2026-11-06 16:49:51.597] [gen3dSDK] [error] [ClientBroadcast.cpp:125] Port: *:50001 bind error, please check whether the port is occupied.
+[2026-11-06 16:49:51.597] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 16:50:08.959] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 16:50:10.969] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 16:51:14.630] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 16:51:14.631] [gen3dSDK] [info] [CameraPro.cpp:518] Start to open 10.10.10.18:60000
+[2026-11-06 16:51:14.639] [gen3dSDK] [error] [ClientBroadcast.cpp:125] Port: *:50001 bind error, please check whether the port is occupied.
+[2026-11-06 16:51:14.639] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 16:52:17.350] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 16:52:19.352] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 16:53:20.679] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 16:53:22.681] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 16:53:33.321] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 16:53:35.330] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 16:58:22.448] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 16:58:23.649] [gen3dSDK] [info] [CameraPro.cpp:518] Start to open 10.10.10.18:60000
+[2026-11-06 16:58:23.651] [gen3dSDK] [info] [ClientDll.cpp:135] Connect sucessfully. cameraIP: 10.10.10.18, port: 60000.
+[2026-11-06 16:58:23.651] [gen3dSDK] [info] [CameraPro.cpp:1704] Synchronize device time.
+[2026-11-06 16:58:23.651] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E02, taskid: 10001, len: 7.
+[2026-11-06 16:58:24.207] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E02, taskid: 10001, len: 0.
+[2026-11-06 16:58:24.207] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0B, taskid: 10002, len: 0.
+[2026-11-06 16:58:24.257] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0B, taskid: 10002, len: 46.
+[2026-11-06 16:58:24.258] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0C, taskid: 10003, len: 6.
+[2026-11-06 16:58:24.259] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0C, taskid: 10003, len: 30.
+[2026-11-06 16:58:24.259] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1D, taskid: 10004, len: 0.
+[2026-11-06 16:58:24.259] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1D, taskid: 10004, len: 311.
+[2026-11-06 16:58:24.260] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1B, taskid: 10005, len: 4.
+[2026-11-06 16:58:24.260] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1B, taskid: 10005, len: 128.
+[2026-11-06 16:58:24.261] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1A, taskid: 10006, len: 4.
+[2026-11-06 16:58:24.261] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1A, taskid: 10006, len: 72.
+[2026-11-06 16:58:24.262] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10007;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 16:58:24.263] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10007, len: 4.
+[2026-11-06 16:58:24.263] [gen3dSDK] [info] [CameraPro.cpp:572] Set 10.10.10.18:60000 WorkMode to SoftTrigger.
+[2026-11-06 16:58:24.263] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0C, taskid: 10008, len: 6.
+[2026-11-06 16:58:24.264] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0C, taskid: 10008, len: 30.
+[2026-11-06 16:58:24.264] [gen3dSDK] [info] [CameraPro.cpp:1630] Close the camera 10.10.10.18:60000.
+[2026-11-06 16:58:24.449] [gen3dSDK] [info] [ClientRecvThread.cpp:56] Disconnected. errno: 9.
+[2026-11-06 16:58:24.784] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:05:14.699] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:05:16.902] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:09:34.969] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:09:39.970] [gen3dSDK] [info] [CameraPro.cpp:518] Start to open 10.10.10.18:60000
+[2026-11-06 17:09:39.971] [gen3dSDK] [info] [ClientDll.cpp:135] Connect sucessfully. cameraIP: 10.10.10.18, port: 60000.
+[2026-11-06 17:09:39.972] [gen3dSDK] [info] [CameraPro.cpp:1704] Synchronize device time.
+[2026-11-06 17:09:39.972] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E02, taskid: 10001, len: 7.
+[2026-11-06 17:09:40.154] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E02, taskid: 10001, len: 0.
+[2026-11-06 17:09:40.154] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0B, taskid: 10002, len: 0.
+[2026-11-06 17:09:40.204] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0B, taskid: 10002, len: 46.
+[2026-11-06 17:09:40.204] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0C, taskid: 10003, len: 6.
+[2026-11-06 17:09:40.205] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0C, taskid: 10003, len: 30.
+[2026-11-06 17:09:40.205] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1D, taskid: 10004, len: 0.
+[2026-11-06 17:09:40.206] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1D, taskid: 10004, len: 311.
+[2026-11-06 17:09:40.206] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1B, taskid: 10005, len: 4.
+[2026-11-06 17:09:40.207] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1B, taskid: 10005, len: 128.
+[2026-11-06 17:09:40.207] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1A, taskid: 10006, len: 4.
+[2026-11-06 17:09:40.208] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1A, taskid: 10006, len: 72.
+[2026-11-06 17:09:40.208] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10007;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:09:40.209] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10007, len: 4.
+[2026-11-06 17:09:40.209] [gen3dSDK] [info] [CameraPro.cpp:572] Set 10.10.10.18:60000 WorkMode to SoftTrigger.
+[2026-11-06 17:09:40.209] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10008;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:09:40.210] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10008, len: 4.
+[2026-11-06 17:09:40.210] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x000A, taskid: 10009, len: 0.
+[2026-11-06 17:09:41.923] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x000A, taskid: 10009, len: 96.
+[2026-11-06 17:09:41.924] [gen3dSDK] [info] [CameraPro.cpp:745] recv source data size: 25762911
+[2026-11-06 17:09:42.094] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x000A, taskid: 10009, len: 13207008.
+[2026-11-06 17:09:42.095] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x000A, taskid: 10009, len: 72.
+[2026-11-06 17:09:42.169] [gen3dSDK] [info] [CameraPro.cpp:711] frameIndex: 0, timestamp: 1793956178
+[2026-11-06 17:09:42.169] [gen3dSDK] [info] [CameraPro.cpp:713] Durations in ms: total: 1958.586782, acquisition: 1577.221784, computation: 184.893352, transfer: 110.670858
+[2026-11-06 17:09:42.285] [gen3dSDK] [info] [CameraPro.cpp:1630] Close the camera 10.10.10.18:60000.
+[2026-11-06 17:09:42.371] [gen3dSDK] [info] [ClientRecvThread.cpp:56] Disconnected. errno: 9.
+[2026-11-06 17:09:42.791] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:11:45.304] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:11:50.105] [gen3dSDK] [info] [CameraPro.cpp:518] Start to open 10.10.10.18:60000
+[2026-11-06 17:11:50.109] [gen3dSDK] [info] [ClientDll.cpp:135] Connect sucessfully. cameraIP: 10.10.10.18, port: 60000.
+[2026-11-06 17:11:50.109] [gen3dSDK] [info] [CameraPro.cpp:1704] Synchronize device time.
+[2026-11-06 17:11:50.109] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E02, taskid: 10001, len: 7.
+[2026-11-06 17:11:50.572] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E02, taskid: 10001, len: 0.
+[2026-11-06 17:11:50.572] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0B, taskid: 10002, len: 0.
+[2026-11-06 17:11:50.622] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0B, taskid: 10002, len: 46.
+[2026-11-06 17:11:50.623] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0C, taskid: 10003, len: 6.
+[2026-11-06 17:11:50.624] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0C, taskid: 10003, len: 30.
+[2026-11-06 17:11:50.624] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1D, taskid: 10004, len: 0.
+[2026-11-06 17:11:50.625] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1D, taskid: 10004, len: 311.
+[2026-11-06 17:11:50.625] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1B, taskid: 10005, len: 4.
+[2026-11-06 17:11:50.626] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1B, taskid: 10005, len: 128.
+[2026-11-06 17:11:50.626] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1A, taskid: 10006, len: 4.
+[2026-11-06 17:11:50.627] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1A, taskid: 10006, len: 72.
+[2026-11-06 17:11:50.627] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10007;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:11:50.629] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10007, len: 4.
+[2026-11-06 17:11:50.629] [gen3dSDK] [info] [CameraPro.cpp:572] Set 10.10.10.18:60000 WorkMode to SoftTrigger.
+[2026-11-06 17:11:50.629] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10008;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:11:50.630] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10008, len: 4.
+[2026-11-06 17:11:50.630] [gen3dSDK] [info] [CameraPro.cpp:1630] Close the camera 10.10.10.18:60000.
+[2026-11-06 17:11:50.706] [gen3dSDK] [info] [ClientRecvThread.cpp:56] Disconnected. errno: 9.
+[2026-11-06 17:11:51.152] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:12:38.720] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:12:43.521] [gen3dSDK] [info] [CameraPro.cpp:518] Start to open 10.10.10.18:60000
+[2026-11-06 17:12:43.522] [gen3dSDK] [info] [ClientDll.cpp:135] Connect sucessfully. cameraIP: 10.10.10.18, port: 60000.
+[2026-11-06 17:12:43.522] [gen3dSDK] [info] [CameraPro.cpp:1704] Synchronize device time.
+[2026-11-06 17:12:43.522] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E02, taskid: 10001, len: 7.
+[2026-11-06 17:12:44.105] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E02, taskid: 10001, len: 0.
+[2026-11-06 17:12:44.105] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0B, taskid: 10002, len: 0.
+[2026-11-06 17:12:44.155] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0B, taskid: 10002, len: 46.
+[2026-11-06 17:12:44.156] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0C, taskid: 10003, len: 6.
+[2026-11-06 17:12:44.157] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0C, taskid: 10003, len: 30.
+[2026-11-06 17:12:44.157] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1D, taskid: 10004, len: 0.
+[2026-11-06 17:12:44.158] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1D, taskid: 10004, len: 311.
+[2026-11-06 17:12:44.158] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1B, taskid: 10005, len: 4.
+[2026-11-06 17:12:44.159] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1B, taskid: 10005, len: 128.
+[2026-11-06 17:12:44.159] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1A, taskid: 10006, len: 4.
+[2026-11-06 17:12:44.159] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1A, taskid: 10006, len: 72.
+[2026-11-06 17:12:44.160] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10007;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:12:44.165] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10007, len: 4.
+[2026-11-06 17:12:44.165] [gen3dSDK] [info] [CameraPro.cpp:572] Set 10.10.10.18:60000 WorkMode to SoftTrigger.
+[2026-11-06 17:12:44.165] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10008;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:12:44.166] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10008, len: 4.
+[2026-11-06 17:12:44.166] [gen3dSDK] [info] [CameraPro.cpp:1630] Close the camera 10.10.10.18:60000.
+[2026-11-06 17:12:44.322] [gen3dSDK] [info] [ClientRecvThread.cpp:56] Disconnected. errno: 9.
+[2026-11-06 17:12:44.687] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:13:03.989] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:13:06.390] [gen3dSDK] [info] [CameraPro.cpp:518] Start to open 10.10.10.18:60000
+[2026-11-06 17:13:06.393] [gen3dSDK] [info] [ClientDll.cpp:135] Connect sucessfully. cameraIP: 10.10.10.18, port: 60000.
+[2026-11-06 17:13:06.394] [gen3dSDK] [info] [CameraPro.cpp:1704] Synchronize device time.
+[2026-11-06 17:13:06.394] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E02, taskid: 10001, len: 7.
+[2026-11-06 17:13:06.652] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E02, taskid: 10001, len: 0.
+[2026-11-06 17:13:06.652] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0B, taskid: 10002, len: 0.
+[2026-11-06 17:13:06.702] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0B, taskid: 10002, len: 46.
+[2026-11-06 17:13:06.702] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0C, taskid: 10003, len: 6.
+[2026-11-06 17:13:06.704] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0C, taskid: 10003, len: 30.
+[2026-11-06 17:13:06.704] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1D, taskid: 10004, len: 0.
+[2026-11-06 17:13:06.705] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1D, taskid: 10004, len: 311.
+[2026-11-06 17:13:06.705] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1B, taskid: 10005, len: 4.
+[2026-11-06 17:13:06.706] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1B, taskid: 10005, len: 128.
+[2026-11-06 17:13:06.706] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1A, taskid: 10006, len: 4.
+[2026-11-06 17:13:06.708] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1A, taskid: 10006, len: 72.
+[2026-11-06 17:13:06.708] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10007;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:13:06.709] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10007, len: 4.
+[2026-11-06 17:13:06.709] [gen3dSDK] [info] [CameraPro.cpp:572] Set 10.10.10.18:60000 WorkMode to SoftTrigger.
+[2026-11-06 17:13:06.709] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10008;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:13:06.710] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10008, len: 4.
+[2026-11-06 17:13:06.710] [gen3dSDK] [info] [CameraPro.cpp:1630] Close the camera 10.10.10.18:60000.
+[2026-11-06 17:13:06.791] [gen3dSDK] [info] [ClientRecvThread.cpp:56] Disconnected. errno: 9.
+[2026-11-06 17:13:07.231] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:14:58.738] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:15:01.996] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:15:31.027] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:15:34.661] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:15:48.370] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:15:50.572] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:23:44.386] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:23:44.617] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:25:29.232] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:25:29.339] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:26:50.110] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:26:52.338] [gen3dSDK] [info] [CameraPro.cpp:518] Start to open 10.10.10.18:60000
+[2026-11-06 17:26:52.339] [gen3dSDK] [info] [ClientDll.cpp:135] Connect sucessfully. cameraIP: 10.10.10.18, port: 60000.
+[2026-11-06 17:26:52.340] [gen3dSDK] [info] [CameraPro.cpp:1704] Synchronize device time.
+[2026-11-06 17:26:52.340] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E02, taskid: 10001, len: 7.
+[2026-11-06 17:26:53.198] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E02, taskid: 10001, len: 0.
+[2026-11-06 17:26:53.198] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0B, taskid: 10002, len: 0.
+[2026-11-06 17:26:53.250] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0B, taskid: 10002, len: 46.
+[2026-11-06 17:26:53.250] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0C, taskid: 10003, len: 6.
+[2026-11-06 17:26:53.251] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0C, taskid: 10003, len: 30.
+[2026-11-06 17:26:53.251] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1D, taskid: 10004, len: 0.
+[2026-11-06 17:26:53.252] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1D, taskid: 10004, len: 311.
+[2026-11-06 17:26:53.252] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1B, taskid: 10005, len: 4.
+[2026-11-06 17:26:53.254] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1B, taskid: 10005, len: 128.
+[2026-11-06 17:26:53.254] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1A, taskid: 10006, len: 4.
+[2026-11-06 17:26:53.255] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1A, taskid: 10006, len: 72.
+[2026-11-06 17:26:53.255] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10007;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:26:53.256] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10007, len: 4.
+[2026-11-06 17:26:53.256] [gen3dSDK] [info] [CameraPro.cpp:572] Set 10.10.10.18:60000 WorkMode to SoftTrigger.
+[2026-11-06 17:26:53.256] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10008;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:26:53.257] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10008, len: 4.
+[2026-11-06 17:26:53.261] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x000A, taskid: 10009, len: 0.
+[2026-11-06 17:26:55.005] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x000A, taskid: 10009, len: 96.
+[2026-11-06 17:26:55.005] [gen3dSDK] [info] [CameraPro.cpp:745] recv source data size: 25762911
+[2026-11-06 17:26:55.176] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x000A, taskid: 10009, len: 12929630.
+[2026-11-06 17:26:55.176] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x000A, taskid: 10009, len: 72.
+[2026-11-06 17:26:55.267] [gen3dSDK] [info] [CameraPro.cpp:711] frameIndex: 0, timestamp: 1793957212
+[2026-11-06 17:26:55.267] [gen3dSDK] [info] [CameraPro.cpp:713] Durations in ms: total: 2005.437824, acquisition: 1570.733075, computation: 194.820812, transfer: 110.66835
+[2026-11-06 17:26:55.290] [gen3dSDK] [info] [CameraPro.cpp:1630] Close the camera 10.10.10.18:60000.
+[2026-11-06 17:26:55.340] [gen3dSDK] [info] [ClientRecvThread.cpp:56] Disconnected. errno: 9.
+[2026-11-06 17:26:55.809] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:26:56.340] [gen3dSDK] [info] [ClientDll.cpp:45] ClientDll destructed successfully.
+[2026-11-06 17:29:40.113] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:29:42.318] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:30:31.408] [gen3dSDK] [info] [CameraPro.cpp:322] SDK start, version: 3.0.25.1
+[2026-11-06 17:30:34.188] [gen3dSDK] [info] [CameraPro.cpp:518] Start to open 10.10.10.18:60000
+[2026-11-06 17:30:34.190] [gen3dSDK] [info] [ClientDll.cpp:135] Connect sucessfully. cameraIP: 10.10.10.18, port: 60000.
+[2026-11-06 17:30:34.190] [gen3dSDK] [info] [CameraPro.cpp:1704] Synchronize device time.
+[2026-11-06 17:30:34.190] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E02, taskid: 10001, len: 7.
+[2026-11-06 17:30:34.678] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E02, taskid: 10001, len: 0.
+[2026-11-06 17:30:34.678] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0B, taskid: 10002, len: 0.
+[2026-11-06 17:30:34.730] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0B, taskid: 10002, len: 46.
+[2026-11-06 17:30:34.730] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E0C, taskid: 10003, len: 6.
+[2026-11-06 17:30:34.732] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E0C, taskid: 10003, len: 30.
+[2026-11-06 17:30:34.732] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1D, taskid: 10004, len: 0.
+[2026-11-06 17:30:34.732] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1D, taskid: 10004, len: 311.
+[2026-11-06 17:30:34.733] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1B, taskid: 10005, len: 4.
+[2026-11-06 17:30:34.733] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1B, taskid: 10005, len: 128.
+[2026-11-06 17:30:34.733] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x0E1A, taskid: 10006, len: 4.
+[2026-11-06 17:30:34.734] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E1A, taskid: 10006, len: 72.
+[2026-11-06 17:30:34.734] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10007;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:30:34.735] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10007, len: 4.
+[2026-11-06 17:30:34.736] [gen3dSDK] [info] [CameraPro.cpp:572] Set 10.10.10.18:60000 WorkMode to SoftTrigger.
+[2026-11-06 17:30:34.736] [gen3dSDK] [info] [ClientSendThread.cpp:29] taskid:10008;cmd:SetValue;key:TriggerMode;type:i;value:0;.
+[2026-11-06 17:30:34.737] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x0E31, taskid: 10008, len: 4.
+[2026-11-06 17:30:49.055] [gen3dSDK] [info] [ClientSendThread.cpp:31] Send cmd: 0x000A, taskid: 10022, len: 0.
+[2026-11-06 17:30:50.764] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x000A, taskid: 10022, len: 96.
+[2026-11-06 17:30:50.765] [gen3dSDK] [info] [CameraPro.cpp:745] recv source data size: 25762911
+[2026-11-06 17:30:50.938] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x000A, taskid: 10022, len: 13132169.
+[2026-11-06 17:30:50.938] [gen3dSDK] [info] [ClientRecvThread.cpp:134] recv cmd: 0x000A, taskid: 10022, len: 72.
+[2026-11-06 17:30:51.019] [gen3dSDK] [info] [CameraPro.cpp:711] frameIndex: 0, timestamp: 1793957446
+[2026-11-06 17:30:51.019] [gen3dSDK] [info] [CameraPro.cpp:713] Durations in ms: total: 1963.610187, acquisition: 1575.072492, computation: 201.447478, transfer: 110.082761
+[2026-11-06 17:30:51.040] [gen3dSDK] [info] [CameraPro.cpp:1630] Close the camera 10.10.10.18:60000.
+[2026-11-06 17:30:51.091] [gen3dSDK] [info] [ClientRecvThread.cpp:56] Disconnected. errno: 9.
+[2026-11-06 17:30:51.558] [gen3dSDK] [info] [CameraPro.cpp:354] CameraPro destructed successfully.
+[2026-11-06 17:30:52.092] [gen3dSDK] [info] [ClientDll.cpp:45] ClientDll destructed successfully.

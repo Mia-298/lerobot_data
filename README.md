@@ -36,10 +36,10 @@ bash "$HOME/data/smolvla_work/scripts/download_models.sh"
 conda activate lerobot
 ```
 
-如需使用模型镜像，单独执行：
+模型下载脚本默认使用 `https://hf-mirror.com`，也可以临时指定其他端点：
 
 ```bash
-HF_ENDPOINT=https://hf-mirror.com \
+HF_ENDPOINT=https://huggingface.co \
   bash "$HOME/data/smolvla_work/scripts/download_models.sh"
 ```
 

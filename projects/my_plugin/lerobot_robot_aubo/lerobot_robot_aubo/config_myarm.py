@@ -3,8 +3,6 @@ from pathlib import Path
 
 from lerobot.robots import RobotConfig
 
-import pyaubo_sdk
-
 # 当前目录布局：projects/lerobot_robot_myarm/lerobot_robot_myarm/config_myarm.py
 # 默认模型位于 projects/models/ur5e.xml，也可以创建配置时传入其他绝对路径。
 DEFAULT_XML_PATH = Path(__file__).resolve().parents[2] / "models" / "ur5e.xml"
@@ -47,11 +45,19 @@ class MyArmConfig(RobotConfig):
         "right_gripper",
     ])
     ee_name: str = "attachment_site"
-    robot_ip = "127.0.0.1"  # 服务器 IP 地址
-    robot_port = 30004  # 端口号
-    robot_rpc_client = pyaubo_sdk.RpcClient()
-    robot_speed = 0.75
-    robot_name = "aubo"
-    robot_password = "123456"
+    robot_ip: str = "192.168.193.130"
+    robot_port: int = 30004
+    robot_name: str = "rob1"
+    robot_password: str = "aubo123"
+    robot_speed: float = 0.75
+    rpc_timeout_ms: int = 1000
+    camera_ip: str = "10.10.10.18"
+
+    move_speed_rad_s: float = 1.3962634015954636  # 80 deg/s
+    move_accel_rad_s2: float = 1.0471975511965976  # 60 deg/s^2
+    power_on_timeout_s: float = 30.0
+    startup_timeout_s: float = 30.0
+    motion_start_timeout_s: float = 1.0
+    motion_timeout_s: float = 30.0
 
 

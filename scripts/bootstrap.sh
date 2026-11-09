@@ -8,8 +8,16 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 ENV_NAME="lerobot"
 LEROBOT_DIR="$ROOT_DIR/projects/lerobot"
+PYTORCH_INDEX_URL="${PYTORCH_INDEX_URL:-https://mirror.sjtu.edu.cn/pytorch-wheels/cu128}"
+
+# pip 默认走国内镜像；调用脚本前设置 PIP_INDEX_URL 可临时覆盖。
+export PIP_INDEX_URL="${PIP_INDEX_URL:-https://pypi.tuna.tsinghua.edu.cn/simple}"
+export PIP_DEFAULT_TIMEOUT="${PIP_DEFAULT_TIMEOUT:-120}"
+export PIP_DISABLE_PIP_VERSION_CHECK="1"
 
 echo "项目根目录：$ROOT_DIR"
+echo "pip 软件源：$PIP_INDEX_URL"
+echo "PyTorch 软件源：$PYTORCH_INDEX_URL"
 
 # ---------- 1. 检查基础工具 ----------
 
@@ -68,14 +76,23 @@ run_in_env() {
 
 run_in_env python --version
 
-# ---------- 4. 恢复指定版本的 LeRobot ----------
+# ---------- 4. 安装与当前显卡驱动兼容的 PyTorch ----------
+
+run_in_env python -m pip install \
+    --upgrade \
+    --extra-index-url "$PYTORCH_INDEX_URL" \
+    "torch==2.11.0+cu128" \
+    "torchvision==0.26.0+cu128"
+
+# ---------- 5. 恢复指定版本的 LeRobot ----------
 
 if [[ ! -e "$LEROBOT_DIR" ]]; then
-    git clone --no-checkout \
-        https://github.com/huggingface/lerobot.git \
-        "$LEROBOT_DIR"
-
-    git -C "$LEROBOT_DIR" checkout --detach "$REVISION"
+    mkdir -p "$LEROBOT_DIR"
+    git -C "$LEROBOT_DIR" init
+    git -C "$LEROBOT_DIR" remote add origin \
+        https://github.com/huggingface/lerobot.git
+    git -C "$LEROBOT_DIR" fetch --depth 1 --no-tags origin "$REVISION"
+    git -C "$LEROBOT_DIR" checkout --detach FETCH_HEAD
 else
     # 避免把普通目录或外层仓库误认为 LeRobot 仓库。
     if [[ ! -e "$LEROBOT_DIR/.git" ]]; then
@@ -100,7 +117,7 @@ else
     echo "LeRobot 已存在，版本正确且工作区干净。"
 fi
 
-# ---------- 5. 安装本地项目 ----------
+# ---------- 6. 安装本地项目 ----------
 
 for project in \
     lerobot \
@@ -123,7 +140,7 @@ do
         -e "$PROJECT_DIR"
 done
 
-# ---------- 6. 检查依赖 ----------
+# ---------- 7. 检查依赖 ----------
 
 run_in_env python -m pip check
 
