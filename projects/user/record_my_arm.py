@@ -291,7 +291,9 @@ def main(cfg: MyRecordConfig):
             break
         cfg.robot.task_id = task_id
         cfg.dataset.single_task = cfg.robot.tasklist[task_id - 1]
-
+        cfg.dataset.num_episodes = 1
+        cfg.dataset.no_stamp = True
+        cfg.dataset.push_to_hub = False
         if cfg.teleop.type == "my_arm_auto":
             try:
                 targets = resolve_task_tags(task_id, cfg.robot.tasklist)
