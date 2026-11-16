@@ -73,6 +73,13 @@ class KeyboardIKActionStep(RobotActionProcessorStep):
         assert self._joint_target is not None
         assert self._gripper_target is not None
 
+        # 自动状态机可下发归一化夹爪绝对目标，即使本周期没有 XYZ 移动。
+        if "gripper.pos" in action:
+            gripper_target = float(action["gripper.pos"])
+            if not np.isfinite(gripper_target) or not 0.0 <= gripper_target <= 1.0:
+                raise ValueError("gripper.pos 必须在 0～1 之间")
+            self._gripper_target = gripper_target
+
         movement = np.array(
             [
                 action["delta_x"],

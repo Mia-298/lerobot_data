@@ -18,7 +18,9 @@ if _IS_WSL:
 from lerobot.configs import parser
 from lerobot.scripts import lerobot_record as _lerobot_record
 from lerobot.scripts.lerobot_record import RecordConfig
+from dataclasses import dataclass, field, fields
 
+from lerobot.configs.dataset import DatasetRecordConfig
 # 导入这个包时，也会执行其中的配置类注册
 from lerobot_robot_myarm import MyArmConfig, make_myarm_processor
 
@@ -206,22 +208,112 @@ def _limit_rerun_preview_load_on_wsl(cfg: RecordConfig) -> None:
         f"{_RERUN_PREVIEW_FPS:g} FPS、最大 {_RERUN_PREVIEW_MAX_WIDTH}x{_RERUN_PREVIEW_MAX_HEIGHT}；"
         "数据集仍保存原始分辨率和帧率。"
     )
+def select_task(
+    tasks: list[str],
+    previous_id: int | None = None,
+) -> int | None:
+    if not tasks:
+        raise ValueError("任务列表不能为空")
+
+    for number, task in enumerate(tasks, start=1):
+        print(f"{number:2d}. {task}")
+
+    if previous_id is not None:
+        print(f"当前任务：{previous_id}. {tasks[previous_id - 1]}")
+
+    while True:
+        value = input("输入编号，回车沿用上次任务，q 退出：").strip()
+
+        if value.lower() == "q":
+            return None
+
+        if not value and previous_id is not None:
+            return previous_id
+
+        try:
+            number = int(value)
+        except ValueError:
+            print("请输入整数编号")
+            continue
+
+        if 1 <= number <= len(tasks):
+            return number
+
+        print(f"编号必须在 1～{len(tasks)} 之间")
+from dataclasses import dataclass, field
+
+from lerobot.configs.dataset import DatasetRecordConfig
+from lerobot_robot_myarm import MyArmConfig, MyArmKeyboardConfig
+from lerobot.teleoperators import TeleoperatorConfig
+from lerobot_robot_myarm.task_tags import resolve_task_tags
 
 
+@dataclass
+class MyRecordConfig(RecordConfig):
+    robot: MyArmConfig = field(
+        default_factory=lambda: MyArmConfig(
+            xml_path="/home/mia/data/smolvla_work/projects/models/world.xml",
+        )
+    )
+
+    teleop: TeleoperatorConfig = field(
+        default_factory=MyArmKeyboardConfig
+    )
+
+    dataset: DatasetRecordConfig = field(
+        default_factory=lambda: DatasetRecordConfig(
+            repo_id="mia/pick_place_16",
+            root="/home/mia/data/smolvla_work/datasets/pick_place_16",
+            no_stamp=True,
+            fps=30,
+            episode_time_s=60,
+            num_episodes=1,
+            push_to_hub=False,
+        )
+    )
+
+    display_data: bool = True
+    play_sounds: bool = False
 @parser.wrap()
-def main(cfg: RecordConfig):
+def main(cfg: MyRecordConfig):
+    # record() 的 CLI 包装器按精确类型判断；转换后直接使用已解析的配置。
+    cfg = RecordConfig(**{item.name: getattr(cfg, item.name) for item in fields(RecordConfig) if item.init})
     if not isinstance(cfg.robot, MyArmConfig):
         raise ValueError("这个启动脚本需要使用 --robot.type=my_arm")
     _start_rerun_web_viewer_on_wsl(cfg)
     _limit_rerun_preview_load_on_wsl(cfg)
-    # processor是流水线，之后调用processor((act, obs))才会调用call，然后才调用ik_step.action(action),在
-    processor = make_myarm_processor(cfg.robot)
+    num_episodes = 16
+ 
+    previous_id = None
+    for _ in range(num_episodes):
+        task_id = select_task(cfg.robot.tasklist, previous_id)
+        if task_id is None:
+            break
+        cfg.robot.task_id = task_id
+        cfg.dataset.single_task = cfg.robot.tasklist[task_id - 1]
 
-    # 把自定义流水线交给官方录制函数
-    _lerobot_record.record(
-        cfg,
-        teleop_action_processor=processor,
-    )
+        if cfg.teleop.type == "my_arm_auto":
+            try:
+                targets = resolve_task_tags(task_id, cfg.robot.tasklist)
+            except ValueError as exc:
+                print(exc)
+                continue
+            print(
+                f"任务 {task_id}：抓取 Tag {targets.object_tag_id}，"
+                f"放到盘子 Tag {targets.plate_tag_id}"
+            )
+
+        processor = make_myarm_processor(cfg.robot)
+
+        _lerobot_record.record(
+            cfg,
+            teleop_action_processor=processor,
+        )
+        previous_id = task_id
+        # 后续调用追加到同一个数据集
+        cfg.resume = True
+
+    
 
 
 if __name__ == "__main__":

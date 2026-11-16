@@ -1,10 +1,4 @@
-"""Detect all AprilTags in a MuJoCo renderer image.
-
-``MyArm._renderer.render().copy()`` returns an RGB ``uint8`` array with
-shape ``(height, width, 3)``.  The public function in this file accepts that
-array directly and uses the AprilTag 36h11 family, which is also used by the
-textures in ``projects/models/textures``.
-
+"""检测图像中的apriltag
 Example
 -------
     from detect_apriltags import detect_apriltags
@@ -36,7 +30,43 @@ TAG_SIZE_M = {
     4: 0.030,  # cup_small
     5: 0.040,  # cup_large
 }
+PNP_TAG_SIZE_M = {
+    tag_id: size * (192 / 256)
+    for tag_id, size in TAG_SIZE_M.items()
+}
+def detection_to_T(
+    detection: AprilTagDetection,
+    camera_matrix: np.ndarray,
+    distortion_coefficients: np.ndarray,
+) -> np.ndarray:
+    tag_size = PNP_TAG_SIZE_M[detection.tag_id]
+    half = tag_size / 2.0
 
+    object_points = np.array([
+        [-half,  half, 0.0],
+        [ half,  half, 0.0],
+        [ half, -half, 0.0],
+        [-half, -half, 0.0],
+    ], dtype=np.float32)
+
+    image_points = detection.corners.astype(np.float32)
+
+    success, rvec, tvec = cv2.solvePnP(
+        object_points,
+        image_points,
+        camera_matrix,
+        # 机的镜头畸变参数
+        distortion_coefficients,
+    )
+    if not success:
+        raise ValueError(f"AprilTag {detection.tag_id} 的 solvePnP 失败")
+
+    R_camera_tag, _ = cv2.Rodrigues(rvec)
+
+    T_camera_tag = np.eye(4)
+    T_camera_tag[:3, :3] = R_camera_tag
+    T_camera_tag[:3, 3] = tvec.reshape(3)
+    return T_camera_tag
 
 @dataclass(frozen=True)
 class AprilTagDetection:
@@ -75,6 +105,7 @@ def _validate_image(image: np.ndarray) -> np.ndarray:
     if image.shape[0] == 0 or image.shape[1] == 0:
         raise ValueError("image 不能为空")
     return np.ascontiguousarray(image)
+
 
 
 def detect_apriltags(image: np.ndarray) -> list[AprilTagDetection]:

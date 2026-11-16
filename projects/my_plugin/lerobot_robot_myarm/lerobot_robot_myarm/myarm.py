@@ -1,3 +1,4 @@
+"""robot子类"""
 from lerobot.robots import Robot
 from .config_myarm import MyArmConfig
 from lerobot.utils.errors import DeviceAlreadyConnectedError, DeviceNotConnectedError
@@ -6,13 +7,12 @@ from pathlib import Path
 import sys
 
 from mia_kinematics import FK_learn, IK_learn
-from .detect_apriltags import detect_apriltags,mask_apriltags
 import numpy as np
 import mujoco
 import time
 import mujoco.viewer
-
-
+from dataclasses import dataclass, field
+import yaml
 
 def get_site_pose_in_base(
     model,
@@ -695,7 +695,6 @@ def cartesian_closed_loop(
 class MyArm(Robot):
     config_class = MyArmConfig
     name = "my_arm"
-
     def __init__(self, config: MyArmConfig):
         # 父类初始化 id、标定目录等通用属性，只调用一次。
         super().__init__(config)
@@ -730,8 +729,20 @@ class MyArm(Robot):
         self.model = None
         self.data = None
         self._renderer = None
+        # world.xml 中 group=5 专用于 AprilTag；只控制图像渲染。
+        self._tag_render_options = mujoco.MjvOption()
+        self._tag_render_options.geomgroup[5] = 1
+        self._obs_render_options = mujoco.MjvOption()
+        self._obs_render_options.geomgroup[5] = 0
         self.control_cycles = 5
         self.max_episode_steps = 200
+        with open(self.config.handeye_calibration_path, "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+
+        # T_attachment_wrist : attachment_site -> wrist
+        self.config.T_G_C = np.array(config["wrist"]["transformation_matrix"], dtype=float)
+        # T_attachment_fc : attachment_site -> fc
+        self.config.T_G_F = np.array(config["fc"]["transformation_matrix"], dtype=float)
 
     @property
     def is_connected(self) -> bool:
@@ -925,7 +936,7 @@ class MyArm(Robot):
         )
         
         for camera_name in self.camera_names:
-            observation[camera_name] = mask_apriltags(self.get_images(camera_name))
+            observation[camera_name] = self.get_images(camera_name, hide_tags=True)
         return observation
 
     def send_action(self, action: dict) -> dict:
@@ -976,8 +987,8 @@ class MyArm(Robot):
         }
         sent_action["gripper.pos"] = gripper
         return sent_action
-    def get_images(self, camera_name: str) -> np.ndarray:
-        """读取一个已配置相机，返回独立的 H×W×3 uint8 RGB 数组。"""
+    def get_images(self, camera_name: str, *, hide_tags: bool = False) -> np.ndarray:
+        """返回独立 RGB 图像；默认保留 Tag 供检测，observation 使用 hide_tags=True。"""
         if not self.is_connected:
             raise DeviceNotConnectedError("请先调用 MyArm.connect()")
         if camera_name not in self.camera_names:
@@ -989,7 +1000,11 @@ class MyArm(Robot):
                 height=self.image_height,
                 width=self.image_width,
             )
-        self._renderer.update_scene(self.data, camera=camera_name)
+        self._renderer.update_scene(
+            self.data,
+            camera=camera_name,
+            scene_option=self._obs_render_options if hide_tags else self._tag_render_options,
+        )
         # copy 防止下一次渲染覆盖已经返回给采集程序的图像。
         return self._renderer.render().copy()
     # 用于episode之间的复位
@@ -1008,5 +1023,42 @@ class MyArm(Robot):
         mujoco.mj_forward(self.model, self.data)
 
         print("仿真已恢复 home 初始状态")
-    
+    def get_camera_pose_in_base(self):
+        camera_id = mujoco.mj_name2id(
+            self.model,
+            mujoco.mjtObj.mjOBJ_CAMERA,
+            self.config.camera_name,
+        )
 
+        base_id = mujoco.mj_name2id(
+            self.model,
+            mujoco.mjtObj.mjOBJ_BODY,
+            "base",
+        )
+
+        p_world_camera = self.data.cam_xpos[camera_id].copy()
+        R_world_camera = (
+            self.data.cam_xmat[camera_id]
+            .reshape(3, 3)
+            .copy()
+        )
+
+        p_world_base = self.data.xpos[base_id].copy()
+        R_world_base = (
+            self.data.xmat[base_id]
+            .reshape(3, 3)
+            .copy()
+        )
+
+        T_world_camera = np.eye(4)
+        T_world_camera[:3, :3] = R_world_camera
+        T_world_camera[:3, 3] = p_world_camera
+
+        T_world_base = np.eye(4)
+        T_world_base[:3, :3] = R_world_base
+        T_world_base[:3, 3] = p_world_base
+
+        T_base_world = np.linalg.inv(T_world_base)
+
+        return T_base_world @ T_world_camera
+        

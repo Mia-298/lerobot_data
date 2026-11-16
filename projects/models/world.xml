@@ -4,7 +4,7 @@
     1. 通过 include 导入现有 UR5e + 夹爪模型；
     2. 场景坐标单位为米；
     3. 每个可抓取物体都有一个独立的 AprilTag 纹理平面；
-    4. 物体的 tag 平面只参与视觉，不参与碰撞。
+    4. 物体的 tag 平面只参与视觉，不参与碰撞；group=5 专用于 Tag，observation 渲染时隐藏。
   -->
   <include file="ur5e_world.xml"/>
 
@@ -79,7 +79,7 @@
     <body name="cube_small" pos="0.30 -0.52 0.7625">
       <freejoint name="cube_small_free"/>
       <geom name="cube_small_geom" type="box" size="0.0225 0.0225 0.0225" material="mat_cube_small" density="400"/>
-      <geom name="cube_small_tag" type="box" pos="0 0 0.0235" size="0.015 0.015 0.0005"
+      <geom name="cube_small_tag" group="5" type="box" pos="0 0 0.0235" size="0.015 0.015 0.0005"
             material="mat_tag_cube_small" contype="0" conaffinity="0"/>
     </body>
 
@@ -87,7 +87,7 @@
     <body name="cube_large" pos="0.48 -0.52 0.7775">
       <freejoint name="cube_large_free"/>
       <geom name="cube_large_geom" type="box" size="0.0375 0.0375 0.0375" material="mat_cube_large" density="400"/>
-      <geom name="cube_large_tag" type="box" pos="0 0 0.038" size="0.025 0.025 0.0005"
+      <geom name="cube_large_tag" group="5" type="box" pos="0 0 0.038" size="0.025 0.025 0.0005"
             material="mat_tag_cube_large" contype="0" conaffinity="0"/>
     </body>
 
@@ -95,7 +95,7 @@
     <body name="plate_small" pos="0.70 -0.55 0.746">
       <freejoint name="plate_small_free"/>
       <geom name="plate_small_geom" type="cylinder" size="0.0525 0.006" material="mat_plate_small" density="250"/>
-      <geom name="plate_small_tag" type="box" pos="0 0 0.0065" size="0.0175 0.0175 0.0005"
+      <geom name="plate_small_tag" group="5" type="box" pos="0 0 0.0065" size="0.0175 0.0175 0.0005"
             material="mat_tag_plate_small" contype="0" conaffinity="0"/>
     </body>
 
@@ -103,7 +103,7 @@
     <body name="plate_large" pos="0.70 -0.37 0.7475">
       <freejoint name="plate_large_free"/>
       <geom name="plate_large_geom" type="cylinder" size="0.0725 0.0075" material="mat_plate_large" density="250"/>
-      <geom name="plate_large_tag" type="box" pos="0 0 0.008" size="0.0225 0.0225 0.0005"
+      <geom name="plate_large_tag" group="5" type="box" pos="0 0 0.008" size="0.0225 0.0225 0.0005"
             material="mat_tag_plate_large" contype="0" conaffinity="0"/>
     </body>
 
@@ -113,7 +113,7 @@
       <geom name="cup_small_body" type="cylinder" size="0.0275 0.0375" material="mat_cup_small" density="300"/>
       <geom name="cup_small_handle" type="capsule" fromto="0.0225 0 0.0025 0.045 0 0.0025"
             size="0.005" material="mat_cup_small"/>
-      <geom name="cup_small_tag" type="box" pos="0 0 0.038" size="0.015 0.015 0.0005"
+      <geom name="cup_small_tag" group="5" type="box" pos="0 0 0.038" size="0.015 0.015 0.0005"
             material="mat_tag_cup_small" contype="0" conaffinity="0"/>
     </body>
 
@@ -123,7 +123,7 @@
       <geom name="cup_large_body" type="cylinder" size="0.0375 0.050" material="mat_cup_large" density="300"/>
       <geom name="cup_large_handle" type="capsule" fromto="0.030 0 0.0025 0.060 0 0.0025"
             size="0.006" material="mat_cup_large"/>
-      <geom name="cup_large_tag" type="box" pos="0 0 0.0505" size="0.020 0.020 0.0005"
+      <geom name="cup_large_tag" group="5" type="box" pos="0 0 0.0505" size="0.020 0.020 0.0005"
             material="mat_tag_cup_large" contype="0" conaffinity="0"/>
     </body>
   </worldbody>
