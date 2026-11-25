@@ -5,6 +5,7 @@ import subprocess
 import sys
 import time
 import webbrowser
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -18,8 +19,6 @@ if _IS_WSL:
 from lerobot.configs import parser
 from lerobot.scripts import lerobot_record as _lerobot_record
 from lerobot.scripts.lerobot_record import RecordConfig
-from dataclasses import dataclass, field, fields
-
 from lerobot.configs.dataset import DatasetRecordConfig
 # 导入这个包时，也会执行其中的配置类注册
 from lerobot_robot_myarm import MyArmConfig, make_myarm_processor
@@ -240,12 +239,23 @@ def select_task(
             return number
 
         print(f"编号必须在 1～{len(tasks)} 之间")
-from dataclasses import dataclass, field
 
-from lerobot.configs.dataset import DatasetRecordConfig
 from lerobot_robot_myarm import MyArmConfig, MyArmKeyboardConfig
 from lerobot.teleoperators import TeleoperatorConfig
 from lerobot_robot_myarm.task_tags import resolve_task_tags
+
+
+@dataclass
+class MyDatasetRecordConfig(DatasetRecordConfig):
+    # Draccus 在传入任意 --dataset.* 参数时会重新构造嵌套配置；
+    # 默认值必须声明在字段上，不能只写在外层 default_factory 的 lambda 里。
+    repo_id: str = "mia/pick_place_16"
+    root: str | Path | None = "/home/mia/data/smolvla_work/datasets/pick_place_16"
+    no_stamp: bool = True
+    fps: int = 30
+    episode_time_s: int | float = 90
+    num_episodes: int = 1
+    push_to_hub: bool = False
 
 
 @dataclass
@@ -253,6 +263,8 @@ class MyRecordConfig(RecordConfig):
     robot: MyArmConfig = field(
         default_factory=lambda: MyArmConfig(
             xml_path="/home/mia/data/smolvla_work/projects/models/world.xml",
+            randomize_objects=True,
+            randomize_lighting=True,
         )
     )
 
@@ -260,20 +272,30 @@ class MyRecordConfig(RecordConfig):
         default_factory=MyArmKeyboardConfig
     )
 
-    dataset: DatasetRecordConfig = field(
-        default_factory=lambda: DatasetRecordConfig(
-            repo_id="mia/pick_place_16",
-            root="/home/mia/data/smolvla_work/datasets/pick_place_16",
-            no_stamp=True,
-            fps=30,
-            episode_time_s=60,
-            num_episodes=1,
-            push_to_hub=False,
-        )
-    )
+    dataset: MyDatasetRecordConfig = field(default_factory=MyDatasetRecordConfig)
 
     display_data: bool = True
     play_sounds: bool = False
+
+
+def _print_recording_summary(dataset) -> None:
+    # 官方 record() 返回前已 finalize；只读本次 writer 保存的最新 episode，
+    # 不用累计 num_frames，避免 resume 时把历史帧数误算成本段时长。
+    latest_episode = dataset.meta.latest_episode
+    if latest_episode is None:
+        print("本次未保存新的 episode。", flush=True)
+        return
+    episode_index = int(latest_episode["episode_index"][0])
+    frames = int(latest_episode["length"][0])
+    fps = dataset.fps
+    print(
+        f"已保存 episode {episode_index}：{frames} 帧，数据集 FPS={fps}，"
+        f"按帧数计算的视频时长约 {frames / fps:.2f}s。"
+        "episode_time_s 限制的是现实录制时间，不保证采满目标帧数。",
+        flush=True,
+    )
+
+
 @parser.wrap()
 def main(cfg: MyRecordConfig):
     # record() 的 CLI 包装器按精确类型判断；转换后直接使用已解析的配置。
@@ -285,8 +307,9 @@ def main(cfg: MyRecordConfig):
     num_episodes = 16
  
     previous_id = None
-    for _ in range(num_episodes):
-        task_id = select_task(cfg.robot.tasklist, previous_id)
+    for _ in range(num_episodes*20):
+        # task_id = select_task(cfg.robot.tasklist, previous_id)
+        task_id = (_+1)%num_episodes
         if task_id is None:
             break
         cfg.robot.task_id = task_id
@@ -305,12 +328,25 @@ def main(cfg: MyRecordConfig):
                 f"放到盘子 Tag {targets.plate_tag_id}"
             )
 
-        processor = make_myarm_processor(cfg.robot)
+        processor = make_myarm_processor(
+            cfg.robot,
+            auto_config=cfg.teleop if cfg.teleop.type == "my_arm_auto" else None,
+        )
 
-        _lerobot_record.record(
+        print(
+            f"本次录制有效配置：episode_time_s={cfg.dataset.episode_time_s}s（现实时间上限），"
+            f"fps={cfg.dataset.fps}，repo_id={cfg.dataset.repo_id}，"
+            f"root={cfg.dataset.root}，resume={cfg.resume}",
+            flush=True,
+        )
+        dataset = _lerobot_record.record(
             cfg,
             teleop_action_processor=processor,
         )
+        if dataset is not None:
+            _print_recording_summary(dataset)
+        # 官方 record 每次新建机器人；固定 seed 时递增索引，避免重复同一次采样。
+        cfg.robot.scene_randomization_index += 1
         previous_id = task_id
         # 后续调用追加到同一个数据集
         cfg.resume = True

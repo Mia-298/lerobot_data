@@ -1,6 +1,7 @@
 """robot子类"""
 from lerobot.robots import Robot
 from .config_myarm import MyArmConfig
+from .scene_randomization import randomize_scene
 from lerobot.utils.errors import DeviceAlreadyConnectedError, DeviceNotConnectedError
 
 from pathlib import Path
@@ -399,7 +400,7 @@ def cartesian_closed_loop(
     T6ee,
     target_position,
     target_rpy,
-    control_dt=0.01,
+    control_dt=1.0 / 30.0,
     max_time=10.0,
     position_tolerance=0.002,
     rotation_tolerance=0.01,
@@ -729,6 +730,8 @@ class MyArm(Robot):
         self.model = None
         self.data = None
         self._renderer = None
+        self._detection_renderer = None
+        self._detection_renderer_size = None
         # world.xml 中 group=5 专用于 AprilTag；只控制图像渲染。
         self._tag_render_options = mujoco.MjvOption()
         self._tag_render_options.geomgroup[5] = 1
@@ -848,10 +851,13 @@ class MyArm(Robot):
             model.vis.global_.offwidth = max(model.vis.global_.offwidth, self.image_width)
             model.vis.global_.offheight = max(model.vis.global_.offheight, self.image_height)
 
+        scene_randomization = randomize_scene(model, data, self.config)
+
         # 全部检查通过后，提交连接所需的成员属性。
         self.model = model
         self.data = data
         self.home_id = home_id
+        self.scene_randomization = scene_randomization
         self.joint_ids = joint_ids
         self.transforms_relative = transforms_relative
         self.axes_relative = axes_relative
@@ -873,10 +879,16 @@ class MyArm(Robot):
             if self._renderer is not None:
                 self._renderer.close()
         finally:
-            self._renderer = None
-            self.data = None
-            self.model = None
-            self._is_connected = False
+            try:
+                if self._detection_renderer is not None:
+                    self._detection_renderer.close()
+            finally:
+                self._renderer = None
+                self._detection_renderer = None
+                self._detection_renderer_size = None
+                self.data = None
+                self.model = None
+                self._is_connected = False
 
     @property
     def is_calibrated(self) -> bool:
@@ -987,26 +999,50 @@ class MyArm(Robot):
         }
         sent_action["gripper.pos"] = gripper
         return sent_action
-    def get_images(self, camera_name: str, *, hide_tags: bool = False) -> np.ndarray:
-        """返回独立 RGB 图像；默认保留 Tag 供检测，observation 使用 hide_tags=True。"""
+    def get_images(
+        self, camera_name: str, *, hide_tags: bool = False,
+        width: int | None = None, height: int | None = None,
+    ) -> np.ndarray:
+        """独立 RGB 图像；可原生高分辨率渲染，保持 observation 尺寸不变。
+
+        默认复用 observation 渲染器；非默认尺寸复用另一个渲染器，切换尺寸
+        时关闭旧实例。不是对低分辨率图像插值放大。
+        """
         if not self.is_connected:
             raise DeviceNotConnectedError("请先调用 MyArm.connect()")
         if camera_name not in self.camera_names:
             raise ValueError(f"相机 {camera_name!r} 未启用，请检查 config.camera_names")
-        # 同一个渲染器可以切换相机，不需要每一帧都重新创建。
-        if self._renderer is None:
-            self._renderer = mujoco.Renderer(
-                self.model,
-                height=self.image_height,
-                width=self.image_width,
-            )
-        self._renderer.update_scene(
+        width = self.image_width if width is None else width
+        height = self.image_height if height is None else height
+        for name, value in (("width", width), ("height", height)):
+            if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+                raise ValueError(f"渲染 {name} 必须是正整数")
+        size = (width, height)
+        is_observation_size = size == (self.image_width, self.image_height)
+        if is_observation_size:
+            if self._renderer is None:
+                self._renderer = mujoco.Renderer(self.model, height=height, width=width)
+            renderer = self._renderer
+        else:
+            if self._detection_renderer_size != size:
+                if self._detection_renderer is not None:
+                    self._detection_renderer.close()
+                self._detection_renderer = None
+                self._detection_renderer_size = None
+            if self._detection_renderer is None:
+                # 在新 Renderer 创建 GL framebuffer 前扩大上限，不改已有渲染器尺寸。
+                self.model.vis.global_.offwidth = max(self.model.vis.global_.offwidth, width)
+                self.model.vis.global_.offheight = max(self.model.vis.global_.offheight, height)
+                self._detection_renderer = mujoco.Renderer(self.model, height=height, width=width)
+                self._detection_renderer_size = size
+            renderer = self._detection_renderer
+        renderer.update_scene(
             self.data,
             camera=camera_name,
             scene_option=self._obs_render_options if hide_tags else self._tag_render_options,
         )
         # copy 防止下一次渲染覆盖已经返回给采集程序的图像。
-        return self._renderer.render().copy()
+        return renderer.render().copy()
     # 用于episode之间的复位
     def reset_simulation(self) -> None:
         if not self.is_connected:

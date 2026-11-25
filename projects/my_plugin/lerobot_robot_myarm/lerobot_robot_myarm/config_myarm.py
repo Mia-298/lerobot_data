@@ -20,6 +20,16 @@ class MyArmConfig(RobotConfig):
     handeye_calibration_path: str = str(DEFAULT_CALIBRATION_PATH)
     reset_noise: float = 0.0  # 预留给后续 reset 使用，单位 rad；connect 始终恢复 home。
 
+    # 通用机器人默认关闭；record_my_arm.py 默认开启两种随机化。
+    # 随机化发生在 connect，当前录制入口每段 episode 都会重新 connect。
+    randomize_objects: bool = False
+    randomize_lighting: bool = False
+    scene_randomization_seed: int | None = None
+    scene_randomization_index: int = 0  # 固定 seed 时，每段递增以生成可复现序列。
+    light_brightness_range: list[float] = field(default_factory=lambda: [0.75, 1.15])
+    # 相对 XML 灯光位置，各轴在 [-jitter, +jitter] 内均匀采样，单位米。
+    light_position_jitter: list[float] = field(default_factory=lambda: [0.5, 0.5, 0.3])
+
     # 相机名称必须与 XML 中的 <camera name="..."> 一致；[] 表示只读关节。
     camera_names: list[str] = field(default_factory=lambda: ["front", "wrist"])
     image_width: int = 640

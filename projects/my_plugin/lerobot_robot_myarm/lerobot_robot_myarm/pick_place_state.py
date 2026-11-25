@@ -32,6 +32,7 @@ class PickPlaceStateMachine:
         self.targets = {}
         self.gripper_target = None
         self.failure_reason = None
+        self.minimum_tcp_z = None
 
     def fail(self, reason):
         self.failure_reason = reason
@@ -44,16 +45,24 @@ class PickPlaceStateMachine:
             raise ValueError("TCP 位置必须为三个有限数值，单位米")
         return position.copy()
 
-    def set_targets(self, pick_tcp, place_tcp,obj_height):
+    def set_targets(self, pick_tcp, place_tcp, obj_height, *, minimum_tcp_z=None):
+        if not np.isfinite(obj_height) or obj_height < 0:
+            raise ValueError("物体高度必须为非负有限数")
+        if minimum_tcp_z is not None and not np.isfinite(minimum_tcp_z):
+            raise ValueError("TCP 安全下限必须为有限数")
         # 相对base的pos
         pick = self._position(pick_tcp)
         place = self._position(place_tcp)+ [0,0,obj_height]
+        if minimum_tcp_z is not None:
+            pick[2] = max(pick[2], minimum_tcp_z)
+            place[2] = max(place[2], minimum_tcp_z)
         # 搬运保持同一安全高度；默认假定机器人坐标系 Z 轴朝上。
         travel_z = max(pick[2], place[2]) + self.clearance
         above_pick = pick.copy()
         above_place = place.copy()
         above_pick[2] = above_place[2] = travel_z
         self.reset()
+        self.minimum_tcp_z = minimum_tcp_z
         self.targets = {
             PickPlaceState.MOVE_ABOVE_PICK: above_pick,
             PickPlaceState.MOVE_TO_PICK: pick,
@@ -65,9 +74,19 @@ class PickPlaceStateMachine:
         self.gripper_target = 1.0  # MyArm：1 张开，0 闭合
         self.state = PickPlaceState.MOVE_ABOVE_PICK
 
-    def step(self, tcp_position, *, gripper_open=False, grasp_confirmed=False, release_confirmed=False):
+    def step(self, tcp_position, *, gripper_open=False, grasp_confirmed=False, release_confirmed=False, minimum_tcp_z=None, orientation_ready=True):
         """每次只产生一个周期的动作；抓取成功必须由外部反馈确认。"""
         position = self._position(tcp_position)
+        if minimum_tcp_z is not None:
+            if not np.isfinite(minimum_tcp_z):
+                raise ValueError("TCP 安全下限必须为有限数")
+            self.minimum_tcp_z = minimum_tcp_z
+        if self.minimum_tcp_z is not None:
+            for target in self.targets.values():
+                target[2] = max(target[2], self.minimum_tcp_z)
+            if position[2] < self.minimum_tcp_z - 0.01:
+                self.fail("当前 TCP 低于安全下限，停止自动抓放，请人工检查并复位")
+                raise RuntimeError(self.failure_reason)
         delta = np.zeros(3)
         state = self.state
         if state in self.targets:
@@ -82,8 +101,8 @@ class PickPlaceStateMachine:
                 PickPlaceState.RETREAT: PickPlaceState.DONE,
             }
             if distance <= self.tolerance:
-                # 下降抓取前确认夹爪已张开。
-                if state != PickPlaceState.MOVE_ABOVE_PICK or gripper_open:
+                # 下降抓取前确认夹爪张开且实测姿态已到位。
+                if state != PickPlaceState.MOVE_ABOVE_PICK or (gripper_open and orientation_ready):
                     self.state = next_states[state]
             else:
                 delta = error * min(1.0, self.max_step / distance)
