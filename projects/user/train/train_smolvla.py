@@ -1,16 +1,5 @@
 #!/usr/bin/env python3
-"""用自己的 LeRobot 数据集微调 SmolVLA：修改下方 CONFIG，然后在 IDE 中运行。
 
-IDE Python 解释器选择：/home/mia/miniconda3/envs/lerobot/bin/python
-默认 smoke 模式会真实训练 20 步，并保存 checkpoint；验证通过后改成 train。
-只检查、不训练：将下方 check_only 改为 True，或运行本文件时加 --check。
-离线训练前：在能访问 Hugging Face 的机器上设 prepare_assets_only=True，运行一次准备依赖。
-然后设 prepare_assets_only=False、offline_mode=True 再运行；不能联网时须先复制完整缓存。
-
-本文件在 Python 进程内调用当前安装的 LeRobot 训练入口，不运行 shell 命令。
-内部生成参数列表是为了兼容 LeRobot 的预训练配置/断点恢复解析逻辑。
-导入本文件不会训练；必须运行 main() 才会开始。
-"""
 
 import argparse
 import json
@@ -26,15 +15,21 @@ from pathlib import Path
 class TrainingSettings:
     # ========== 1. 最常修改：模式和自己的数据集 ==========
     mode: str = "smoke"  # smoke：20 步试跑；train：正式微调；resume：恢复中断训练
-    check_only: bool = False  # True：只检查路径和配置，不加载权重、不训练、不保存模型
+    check_only: bool = True  # True：只检查路径和配置，不加载权重、不训练、不保存模型
     dataset_repo_id: str = "mia/pick_place_16_success"  # 本地数据集对应的标识，不会因此上传
-    dataset_root: Path = Path("/datasets/pick_place_16_success")
-    model_path: Path = Path("/models/smolvla_base")
+    # mia配置
+    dataset_root: Path = Path("/home/mia/data/smolvla_work/datasets/pick_place_16_success")
+    model_path: Path = Path("/home/mia/data/smolvla_work/models/smolvla_base")
     output_parent: Path = Path("/home/mia/data/smolvla_work/outputs/train")
+
+    # autodl配置
+    # dataset_root: Path = Path("/root/autodl-tmp/vla_work/datasets/pick_place_16_success")
+    # model_path: Path = Path("/root/autodl-tmp/vla_work/models/smolvla_base")
+    # output_parent: Path = Path("/root/autodl-tmp/vla_work/outputs/train")
     run_name: str | None = None  # None 自动生成时间戳；自定义名称不能和已有目录重名
 
     # ========== 网络与底层 VLM 依赖（本地 SmolVLA 权重不等于依赖已齐全） ==========
-    prepare_assets_only: bool = True  # True：只下载/检查底层 VLM 和 tokenizer，绝不训练
+    prepare_assets_only: bool = False  # True：只下载/检查底层 VLM 和 tokenizer，绝不训练
     offline_mode: bool = True  # True：训练时禁止 Hub 联网；必须事先准备完整缓存
     # None：自动使用 model_path 上两级目录下 cache/huggingface/hub。
     # 例如 AutoDL model_path=/root/autodl-tmp/vla_work/models/smolvla_base 时，
@@ -43,17 +38,17 @@ class TrainingSettings:
     hf_endpoint: str | None = None  # None 保留默认/外部设置；可填你已确认能访问且可信的 Hub 兼容地址
 
     # ========== 2. 正式训练超参数（smoke 模式使用下面独立的试跑参数） ==========
-    steps: int = 10_000  # 训练循环迭代次数，不是遍历数据集的 epoch 数
+    steps: int = 20_000  # 训练循环迭代次数，不是遍历数据集的 epoch 数
     learning_rate: float = 1e-4  # 参数更新幅度；过大易不稳定，过小学习慢
     warmup_steps: int = 500  # 开始阶段逐渐增大学习率，减少训练初期震荡
     decay_steps: int = 10_000  # 学习率衰减到最小值所用的调度总步数（含 warmup）
     min_learning_rate: float = 2.5e-6  # 衰减末端学习率
-    log_freq: int = 20  # 每多少步打印一次 loss 等日志
+    log_freq: int = 500  # 每多少步打印一次 loss 等日志
     save_freq: int = 1_000  # 每多少步保存；最后一步也会保存
 
     # ========== 3. 显存和速度（试跑和正式训练共用） ==========
-    batch_size: int = 1  # 每次读入的样本数；增大通常会增加显存占用
-    num_workers: int = 0  # 数据加载子进程数；先用 0 排错，再按 CPU/内存情况增大
+    batch_size: int = 4  # 每次读入的样本数；增大通常会增加显存占用
+    num_workers: int = 4  # 数据加载子进程数；先用 0 排错，再按 CPU/内存情况增大
     mixed_precision: str = "fp16"  # 1660 SUPER 先用 fp16；不支持/不稳定时可试 no
     gradient_accumulation_steps: int = 1  # 累积若干微批次再更新权重；先保持 1
     image_size: int = 512  # 保持基础模型设置；显存不足可尝试 256，需重新验证效果
