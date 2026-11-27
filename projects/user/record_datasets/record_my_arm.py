@@ -21,8 +21,10 @@ from lerobot.scripts import lerobot_record as _lerobot_record
 from lerobot.scripts.lerobot_record import RecordConfig
 from lerobot.configs.dataset import DatasetRecordConfig
 # 导入这个包时，也会执行其中的配置类注册
-from lerobot_robot_myarm import MyArmConfig, make_myarm_processor
+from lerobot_robot_myarm import MyArmAutoConfig, MyArmConfig, make_myarm_processor
+from lerobot.teleoperators import TeleoperatorConfig
 
+from lerobot_robot_myarm.task_tags import resolve_task_tags
 _RERUN_PID_FILE = Path.home() / ".cache" / "lerobot" / "rerun_web_viewer.pid"
 _RERUN_PREVIEW_FPS = 5.0
 _RERUN_PREVIEW_MAX_WIDTH = 320
@@ -240,9 +242,7 @@ def select_task(
 
         print(f"编号必须在 1～{len(tasks)} 之间")
 
-from lerobot_robot_myarm import MyArmConfig, MyArmKeyboardConfig
-from lerobot.teleoperators import TeleoperatorConfig
-from lerobot_robot_myarm.task_tags import resolve_task_tags
+
 
 
 @dataclass
@@ -250,10 +250,10 @@ class MyDatasetRecordConfig(DatasetRecordConfig):
     # Draccus 在传入任意 --dataset.* 参数时会重新构造嵌套配置；
     # 默认值必须声明在字段上，不能只写在外层 default_factory 的 lambda 里。
     repo_id: str = "mia/pick_place_16"
-    root: str | Path | None = "/home/mia/data/smolvla_work/datasets/pick_place_16"
+    root: str | Path | None = "/home/mia/data/smolvla_work/datasets/pick_place_auto_done"
     no_stamp: bool = True
     fps: int = 30
-    episode_time_s: int | float = 90
+    episode_time_s: int | float = 120
     num_episodes: int = 1
     push_to_hub: bool = False
 
@@ -269,7 +269,7 @@ class MyRecordConfig(RecordConfig):
     )
 
     teleop: TeleoperatorConfig = field(
-        default_factory=MyArmKeyboardConfig
+        default_factory=MyArmAutoConfig
     )
 
     dataset: MyDatasetRecordConfig = field(default_factory=MyDatasetRecordConfig)
@@ -304,52 +304,65 @@ def main(cfg: MyRecordConfig):
         raise ValueError("这个启动脚本需要使用 --robot.type=my_arm")
     _start_rerun_web_viewer_on_wsl(cfg)
     _limit_rerun_preview_load_on_wsl(cfg)
-    num_episodes = 16
- 
-    previous_id = None
-    for _ in range(num_episodes*20):
-        # task_id = select_task(cfg.robot.tasklist, previous_id)
-        task_id = (_+1)%num_episodes
-        if task_id is None:
-            break
-        cfg.robot.task_id = task_id
-        cfg.dataset.single_task = cfg.robot.tasklist[task_id - 1]
-        cfg.dataset.num_episodes = 1
-        cfg.dataset.no_stamp = True
-        cfg.dataset.push_to_hub = False
-        if cfg.teleop.type == "my_arm_auto":
-            try:
-                targets = resolve_task_tags(task_id, cfg.robot.tasklist)
-            except ValueError as exc:
-                print(exc)
-                continue
-            print(
-                f"任务 {task_id}：抓取 Tag {targets.object_tag_id}，"
-                f"放到盘子 Tag {targets.plate_tag_id}"
-            )
-
-        processor = make_myarm_processor(
-            cfg.robot,
-            auto_config=cfg.teleop if cfg.teleop.type == "my_arm_auto" else None,
+    # 一个 episode 只录一个任务；每轮按任务 1～16 顺序执行。
+    # num_cycles=1 表示只跑一轮 16 个任务；保留 20 表示重复 20 轮。
+    num_tasks = 16
+    num_cycles = 20
+    if len(cfg.robot.tasklist) < num_tasks:
+        raise ValueError(
+            f"任务列表至少需要 {num_tasks} 个任务，当前只有 {len(cfg.robot.tasklist)} 个"
         )
 
+    for cycle_index in range(1, num_cycles + 1):
+        # 同一轮的 16 个任务共用一个组合序号，因此每个任务都会在完全相同的
+        # 物体布局/灯光初始化下录制；下一轮才切换到下一个组合序号。
+        cfg.robot.scene_randomization_seed = cycle_index - 1
+        cfg.robot.scene_randomization_index = 0
         print(
-            f"本次录制有效配置：episode_time_s={cfg.dataset.episode_time_s}s（现实时间上限），"
-            f"fps={cfg.dataset.fps}，repo_id={cfg.dataset.repo_id}，"
-            f"root={cfg.dataset.root}，resume={cfg.resume}",
+            f"开始第 {cycle_index}/{num_cycles} 轮，"
+            f"物体组合序号={cfg.robot.scene_randomization_seed}",
             flush=True,
         )
-        dataset = _lerobot_record.record(
-            cfg,
-            teleop_action_processor=processor,
-        )
-        if dataset is not None:
-            _print_recording_summary(dataset)
-        # 官方 record 每次新建机器人；固定 seed 时递增索引，避免重复同一次采样。
-        cfg.robot.scene_randomization_index += 1
-        previous_id = task_id
-        # 后续调用追加到同一个数据集
-        cfg.resume = True
+
+        for task_id in range(1, num_tasks + 1):
+            # MyArmConfig 本身保存自动任务完成标志；不是 cfg.robot.config。
+            cfg.robot.episode_done = False
+            cfg.robot.task_id = task_id
+            cfg.dataset.single_task = cfg.robot.tasklist[task_id - 1]
+            cfg.dataset.num_episodes = 1
+            cfg.dataset.no_stamp = True
+            cfg.dataset.push_to_hub = False
+            if cfg.teleop.type == "my_arm_auto":
+                try:
+                    targets = resolve_task_tags(task_id, cfg.robot.tasklist)
+                except ValueError as exc:
+                    print(exc)
+                    continue
+                print(
+                    f"任务 {task_id}：抓取 Tag {targets.object_tag_id}，"
+                    f"放到盘子 Tag {targets.plate_tag_id}"
+                )
+
+            processor = make_myarm_processor(
+                cfg.robot,
+                auto_config=cfg.teleop if cfg.teleop.type == "my_arm_auto" else None,
+            )
+
+            print(
+                f"第 {cycle_index}/{num_cycles} 轮，任务 {task_id}/{num_tasks}；"
+                f"本次录制有效配置：episode_time_s={cfg.dataset.episode_time_s}s（现实时间上限），"
+                f"fps={cfg.dataset.fps}，repo_id={cfg.dataset.repo_id}，"
+                f"root={cfg.dataset.root}，resume={cfg.resume}",
+                flush=True,
+            )
+            dataset = _lerobot_record.record(
+                cfg,
+                teleop_action_processor=processor,
+            )
+            if dataset is not None:
+                _print_recording_summary(dataset)
+            # 下一次 record 仍使用本轮相同的 seed 和 index，保持同一场景布局。
+            cfg.resume = True
 
     
 

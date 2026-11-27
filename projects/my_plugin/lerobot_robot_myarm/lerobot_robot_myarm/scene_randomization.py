@@ -1,5 +1,6 @@
 """在新加载、恢复 home 的场景上随机化；不修改 XML 或官方录制循环。"""
 import logging
+import math
 import secrets
 
 import mujoco
@@ -13,6 +14,21 @@ OBJECT_NAMES = (
 )
 LIGHT_NAMES = ("key_light", "fill_light")
 logger = logging.getLogger(__name__)
+
+
+def _unrank_permutation(index: int, size: int) -> np.ndarray:
+    """把 0..size!-1 的组合序号映射为一个唯一的字典序排列。"""
+    total = math.factorial(size)
+    if not 0 <= index < total:
+        raise ValueError(f"物体组合序号必须在 0～{total - 1} 之间，当前为 {index}")
+
+    remaining = list(range(size))
+    permutation = []
+    for width in range(size, 0, -1):
+        block_size = math.factorial(width - 1)
+        choice, index = divmod(index, block_size)
+        permutation.append(remaining.pop(choice))
+    return np.asarray(permutation, dtype=int)
 
 
 def _nonnegative_integer(value, name):
@@ -34,11 +50,10 @@ def randomize_scene(model, data, config: MyArmConfig) -> dict:
     if seed is None:
         seed = secrets.randbits(64)
     _nonnegative_integer(seed, "scene_randomization_seed")
-    # 两条独立随机流：切换灯光开关不会改变同一种子的物体排列。
-    object_seed, light_seed = np.random.SeedSequence(
+    # 灯光使用独立随机流，切换灯光开关不会改变同一种子的物体排列。
+    _, light_seed = np.random.SeedSequence(
         [seed, config.scene_randomization_index]
     ).spawn(2)
-    object_rng = np.random.default_rng(object_seed)
     light_rng = np.random.default_rng(light_seed)
     result = {"seed": seed, "index": config.scene_randomization_index}
 
@@ -85,7 +100,14 @@ def randomize_scene(model, data, config: MyArmConfig) -> dict:
             light_updates.append((light_id, name, pos, direction, multiplier))
 
     if config.randomize_objects:
-        permutation = object_rng.permutation(len(OBJECT_NAMES))
+        # seed 在这里作为组合序号使用；index 仍保留为额外的可复现偏移，
+        # 兼容旧配置中通过 scene_randomization_index 生成不同场景的行为。
+        combination_count = math.factorial(len(OBJECT_NAMES))
+        combination_index = (
+            seed + config.scene_randomization_index
+        ) % combination_count
+        permutation = _unrank_permutation(combination_index, len(OBJECT_NAMES))
+        result["object_combination_index"] = int(combination_index)
         result["objects"] = {}
         for i, name in enumerate(OBJECT_NAMES):
             adr, dof = qpos_addresses[i], dof_addresses[i]

@@ -43,6 +43,8 @@ class MyArmAuto(KeyboardEndEffectorTeleop):
         self.plate_detection = None
         self.targets_locked = False
         self._state_ticks = 0
+        # episode 完成信号属于当前自动遥操作器实例，不能跨任务复用。
+        self.episode_done = False
 
     @property
     def state(self):
@@ -51,6 +53,9 @@ class MyArmAuto(KeyboardEndEffectorTeleop):
     def bind_robot(self, robot):
         targets = resolve_task_tags(robot.config.task_id, robot.config.tasklist)
         self.robot = robot
+        # 每次创建/绑定一个新任务时，都必须清除上一个任务的完成状态。
+        self.episode_done = False
+        robot.config.episode_done = False
         # LeRobot 在 robot.connect() 之前绑定，此时 model/data 仍为 None。
         self.table_clearance = None
         self._clearance_model = None
@@ -285,6 +290,9 @@ class MyArmAuto(KeyboardEndEffectorTeleop):
             orientation_ready=orientation_ready,
             minimum_tcp_z=minimum_tcp_z,
         )
+        if self.state == PickPlaceState.DONE:
+            self.episode_done = True
+            self.robot.config.episode_done = True
 
         if self._orientation_active:
             # 绝对姿态元数据仅交给自定义 IK processor，最终输出仍只有关节/夹爪动作。

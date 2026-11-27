@@ -76,7 +76,7 @@
           size="0.23 0.175 0.39" material="mat_platform" contype="1" conaffinity="1"/>
 
     <!-- 小方块：tag 在顶部，物体和 tag 绑定，位置可直接修改 -->
-    <body name="cube_small" pos="0.30 -0.52 0.7625">
+    <body name="cube_small" pos="0.32 -0.52 0.7625">
       <freejoint name="cube_small_free"/>
       <geom name="cube_small_geom" type="box" size="0.0225 0.0225 0.0225" material="mat_cube_small" density="400"/>
       <geom name="cube_small_tag" group="5" type="box" pos="0 0 0.0235" size="0.015 0.015 0.0005"

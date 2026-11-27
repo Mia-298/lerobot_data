@@ -79,3 +79,4 @@ class MyArmConfig(RobotConfig):
         init=False,
         repr=False,
     )
+    episode_done = False

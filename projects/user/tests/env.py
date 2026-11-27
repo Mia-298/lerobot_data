@@ -7,8 +7,8 @@ def make_env(
     cfg=None,
 ):
     # 找到模型文件
-    root = Path(__file__).resolve().parents[1]
-    xml_path = root / "models" / "ur5e.xml"
+    root = Path(__file__).resolve().parents[2]
+    xml_path = root / "models" / "world.xml"
 
     if n_envs < 1:
         raise ValueError("n_envs 必须大于等于 1")
@@ -837,6 +837,11 @@ class UR5ReachEnv(gym.Env):
         self.control_cycles = 5
         self.max_episode_steps = 200
         self._renderer = None
+        # world.xml 中的 AprilTag 几何体使用 group=5；MuJoCo 默认只显示 0～2，
+        # 测试渲染时显式打开全部几何组。
+        self._render_options = mujoco.MjvOption()
+        self._render_options.geomgroup[:] = 1
+
     def get_images(self):
         # 第一次获取图像时创建，之后重复使用
         if self._renderer is None:
@@ -850,6 +855,7 @@ class UR5ReachEnv(gym.Env):
         self._renderer.update_scene(
             self.data,
             camera="wrist",
+            scene_option=self._render_options,
         )
 
         # 获取 RGB 图像
@@ -1069,4 +1075,3 @@ class UR5ReachEnv(gym.Env):
         if self._renderer is not None:
             self._renderer.close()
             self._renderer = None
-

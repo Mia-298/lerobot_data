@@ -9,25 +9,28 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-
+import myarm_eval_config 
 
 @dataclass
 class TrainingSettings:
     # ========== 1. 最常修改：模式和自己的数据集 ==========
     mode: str = "smoke"  # smoke：20 步试跑；train：正式微调；resume：恢复中断训练
-    check_only: bool = True  # True：只检查路径和配置，不加载权重、不训练、不保存模型
-    dataset_repo_id: str = "mia/pick_place_16_success"  # 本地数据集对应的标识，不会因此上传
+    check_only: bool = False  # True：只检查路径和配置，不加载权重、不训练、不保存模型
+    dataset_repo_id: str = "mia/pick_place_auto_done"  # 本地数据集对应的标识，不会因此上传
     # mia配置
-    dataset_root: Path = Path("/home/mia/data/smolvla_work/datasets/pick_place_16_success")
-    model_path: Path = Path("/home/mia/data/smolvla_work/models/smolvla_base")
-    output_parent: Path = Path("/home/mia/data/smolvla_work/outputs/train")
+    # dataset_root: Path = Path("/home/mia/data/smolvla_work/datasets/pick_place_auto_done")
+    # model_path: Path = Path("/home/mia/data/smolvla_work/models/smolvla_base")
+    # output_parent: Path = Path("/home/mia/data/smolvla_work/outputs/train")
 
     # autodl配置
-    # dataset_root: Path = Path("/root/autodl-tmp/vla_work/datasets/pick_place_16_success")
-    # model_path: Path = Path("/root/autodl-tmp/vla_work/models/smolvla_base")
-    # output_parent: Path = Path("/root/autodl-tmp/vla_work/outputs/train")
+    dataset_root: Path = Path("/root/autodl-tmp/vla_work/datasets/pick_place_auto_done")
+    model_path: Path = Path("/root/autodl-tmp/vla_work/models/smolvla_base")
+    output_parent: Path = Path("/root/autodl-tmp/vla_work/outputs/train")
     run_name: str | None = None  # None 自动生成时间戳；自定义名称不能和已有目录重名
-
+    # 验证集分割
+    dataset_eval_split: float = 0.2
+    # 验证集step
+    eval_steps: int = 1000
     # ========== 网络与底层 VLM 依赖（本地 SmolVLA 权重不等于依赖已齐全） ==========
     prepare_assets_only: bool = False  # True：只下载/检查底层 VLM 和 tokenizer，绝不训练
     offline_mode: bool = True  # True：训练时禁止 Hub 联网；必须事先准备完整缓存
@@ -49,7 +52,7 @@ class TrainingSettings:
     # ========== 3. 显存和速度（试跑和正式训练共用） ==========
     batch_size: int = 4  # 每次读入的样本数；增大通常会增加显存占用
     num_workers: int = 4  # 数据加载子进程数；先用 0 排错，再按 CPU/内存情况增大
-    mixed_precision: str = "fp16"  # 1660 SUPER 先用 fp16；不支持/不稳定时可试 no
+    mixed_precision: str = "bf16"  # 1660 SUPER 先用 fp16；不支持/不稳定时可试 no
     gradient_accumulation_steps: int = 1  # 累积若干微批次再更新权重；先保持 1
     image_size: int = 512  # 保持基础模型设置；显存不足可尝试 256，需重新验证效果
     seed: int = 1000  # 随机种子，便于对比实验；不保证所有硬件上完全确定性
@@ -70,6 +73,22 @@ class TrainingSettings:
     # resume 会恢复原配置、优化器、调度器和步数，上面新训练参数不生效。
     # 用于继续未完成的训练；不是给已完成实验自动追加 steps。
     resume_config: Path | None = None
+    # ========== 7. 仿真评测配置 ==========
+    env_type: str | None = "myarm_sim"
+    env_task_id: int = 1
+    # env_xml_path: Path = Path(
+    #     "/home/mia/data/smolvla_work/projects/models/world.xml"
+    # )
+    env_xml_path = Path("/root/autodl-tmp/vla_work/projects/models/world.xml")
+
+    # 0 表示关闭训练期间仿真评测
+    env_eval_freq: int = 1000
+    eval_batch_size: int = 1
+    eval_n_episodes: int = 5
+    eval_use_async_envs: bool = False
+    save_checkpoint: bool  = True
+    use_policy_training_preset: bool  = True
+    wandb_enable: bool  = False
 
 
 CONFIG = TrainingSettings()
@@ -238,11 +257,18 @@ def build_arguments(settings: TrainingSettings) -> list[str]:
         "job_name": name,
         "log_freq": 1 if settings.mode == "smoke" else settings.log_freq,
         "save_freq": steps if settings.mode == "smoke" else settings.save_freq,
-        "save_checkpoint": True,
-        "use_policy_training_preset": True,
-        "env_eval_freq": 0,  # 不自动启动机器人/仿真环境；成功率需要之后单独评估
-        "eval_steps": 0,
-        "wandb.enable": False,
+        "save_checkpoint": settings.save_checkpoint,
+        "use_policy_training_preset": settings.use_policy_training_preset,
+        "env.type": settings.env_type,
+        "env.task_id": settings.env_task_id,
+        "env.xml_path": settings.env_xml_path,
+        "env_eval_freq": settings.env_eval_freq,
+        "eval.batch_size":settings.eval_batch_size,
+        "eval.n_episodes": settings.eval_n_episodes,
+        "eval.use_async_envs": settings.eval_use_async_envs,
+        "eval_steps": settings.eval_steps,
+        "dataset.eval_split": settings.dataset_eval_split,
+        "wandb.enable": settings.wandb_enable,
     }
     return [_flag(key, value) for key, value in values.items()]
 

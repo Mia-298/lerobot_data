@@ -6,7 +6,7 @@ import mujoco.viewer
 from lerobot_robot_myarm import MyArm, MyArmConfig
 from lerobot_robot_myarm.task_tags import resolve_task_tags
 
-@register_env("myarm_eval_env")  # 注册给LeRobot识别
+
 class MyArmEvalEnv(gym.Env):
     """第一步：只实现环境初始化、reset、观测和资源释放。"""
     metadata = {

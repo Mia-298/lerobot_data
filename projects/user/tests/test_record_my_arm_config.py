@@ -12,7 +12,7 @@ from types import SimpleNamespace
 import draccus
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from record_my_arm import (  # noqa: E402
+from projects.user.record_datasets.record_my_arm import (  # noqa: E402
     MyDatasetRecordConfig,
     MyRecordConfig,
     RecordConfig,
