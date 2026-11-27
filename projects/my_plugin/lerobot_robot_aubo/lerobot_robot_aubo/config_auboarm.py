@@ -8,7 +8,7 @@ from lerobot.robots import RobotConfig
 DEFAULT_XML_PATH = Path(__file__).resolve().parents[2] / "models" / "ur5e.xml"
 
 
-@RobotConfig.register_subclass("my_arm")
+@RobotConfig.register_subclass("auboarm")
 @dataclass
 class MyArmConfig(RobotConfig):
     xml_path: str = str(DEFAULT_XML_PATH)

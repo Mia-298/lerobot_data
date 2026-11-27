@@ -1,11 +1,11 @@
 from lerobot.teleoperators.keyboard.teleop_keyboard import KeyboardEndEffectorTeleop
 
-from .config_myarm_keyboard import MyArmKeyboardConfig
-from .myarm import MyArm
+from .config_auboarm_keyboard import MyArmKeyboardConfig
+from .auboarm import MyArm
 
 class MyArmKeyboard(KeyboardEndEffectorTeleop):
     config_class = MyArmKeyboardConfig
-    name = "my_arm_keyboard"
+    name = "auboarm_keyboard"
 
     def __init__(self, config: MyArmKeyboardConfig):
         super().__init__(config)

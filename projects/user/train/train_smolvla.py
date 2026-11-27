@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
+import os
 
+os.environ.setdefault("MUJOCO_GL", "egl")
+os.environ.setdefault("PYOPENGL_PLATFORM", "egl")
 
 import argparse
 import json
@@ -14,7 +17,7 @@ import myarm_eval_config
 @dataclass
 class TrainingSettings:
     # ========== 1. 最常修改：模式和自己的数据集 ==========
-    mode: str = "smoke"  # smoke：20 步试跑；train：正式微调；resume：恢复中断训练
+    mode: str = "train"  # smoke：20 步试跑；train：正式微调；resume：恢复中断训练
     check_only: bool = False  # True：只检查路径和配置，不加载权重、不训练、不保存模型
     dataset_repo_id: str = "mia/pick_place_auto_done"  # 本地数据集对应的标识，不会因此上传
     # mia配置
@@ -23,7 +26,7 @@ class TrainingSettings:
     # output_parent: Path = Path("/home/mia/data/smolvla_work/outputs/train")
 
     # autodl配置
-    dataset_root: Path = Path("/root/autodl-tmp/vla_work/datasets/pick_place_auto_done")
+    dataset_root: Path = Path("/root/autodl-tmp/vla_work/datasets/publish/pick_place_auto_done")
     model_path: Path = Path("/root/autodl-tmp/vla_work/models/smolvla_base")
     output_parent: Path = Path("/root/autodl-tmp/vla_work/outputs/train")
     run_name: str | None = None  # None 自动生成时间戳；自定义名称不能和已有目录重名
@@ -72,7 +75,11 @@ class TrainingSettings:
     # 指向原训练目录下 checkpoints/last/pretrained_model/train_config.json。
     # resume 会恢复原配置、优化器、调度器和步数，上面新训练参数不生效。
     # 用于继续未完成的训练；不是给已完成实验自动追加 steps。
-    resume_config: Path | None = None
+    resume_config: Path = Path(
+    "/root/autodl-tmp/vla_work/outputs/train/"
+    "smolvla_train_20261127_160958_293634/checkpoints/001000/"
+    "pretrained_model/train_config.json"
+)
     # ========== 7. 仿真评测配置 ==========
     env_type: str | None = "myarm_sim"
     env_task_id: int = 1

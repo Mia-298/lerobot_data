@@ -6,7 +6,7 @@ from camsdk_py import Camera
 from lerobot.robots import Robot
 from lerobot.utils.errors import DeviceAlreadyConnectedError, DeviceNotConnectedError
 
-from .config_myarm import MyArmConfig
+from .config_auboarm import MyArmConfig
 
 
 def wait_arrival(
@@ -52,7 +52,7 @@ def _wait_for_robot_mode(robot_state, expected_mode, timeout_s: float) -> None:
 
 class MyArm(Robot):
     config_class = MyArmConfig
-    name = "my_arm"
+    name = "auboarm"
 
     def __init__(self, config: MyArmConfig):
         # 父类初始化 id、标定目录等通用属性，只调用一次。
